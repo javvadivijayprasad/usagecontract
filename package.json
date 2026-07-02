@@ -1,5 +1,5 @@
 {
-  "name": "usagecontract",
+  "name": "@vijaypjavvadi/usagecontract",
   "version": "1.0.0",
   "description": "Usage-aware, spec-anchored contract testing: derive each consumer's contract from observed traffic and gate provider changes by real per-consumer usage.",
   "keywords": [
