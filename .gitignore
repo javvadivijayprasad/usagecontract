@@ -1,0 +1,4 @@
+node_modules/
+example/profiles/
+example/*.json
+*.tgz

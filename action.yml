@@ -1,0 +1,14 @@
+name: 'usagecontract can-i-deploy'
+description: 'Fail CI when an OpenAPI change breaks a consumer that actually uses the changed field.'
+branding: { icon: 'shield', color: 'green' }
+inputs:
+  base:      { description: 'Path to the baseline (deployed) OpenAPI spec', required: true }
+  candidate: { description: 'Path to the candidate OpenAPI spec', required: true }
+  profiles:  { description: 'Directory of recorded consumer profiles', required: true }
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v4
+      with: { node-version: '20' }
+    - shell: bash
+      run: npx usagecontract@latest can-i-deploy --base "${{ inputs.base }}" --candidate "${{ inputs.candidate }}" --profiles "${{ inputs.profiles }}"

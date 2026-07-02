@@ -1,0 +1,49 @@
+{
+  "name": "usagecontract",
+  "version": "1.0.0",
+  "description": "Usage-aware, spec-anchored contract testing: derive each consumer's contract from observed traffic and gate provider changes by real per-consumer usage.",
+  "keywords": [
+    "contract-testing",
+    "openapi",
+    "api",
+    "breaking-changes",
+    "consumer-driven",
+    "microservices",
+    "can-i-deploy"
+  ],
+  "license": "MIT",
+  "author": "Vijay Prasad <jvijayprasad@gmail.com>",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "bin": {
+    "usagecontract": "bin/usagecontract.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "README.md",
+    "LICENSE",
+    "GETTING-STARTED.md",
+    "CITATION.cff",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "example": "node example/run.js",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-lines=90 --test-coverage-branches=75 --test-coverage-functions=90 test/*.test.js"
+  },
+  "devDependencies": {
+    "axios": "^1.18.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/javvadivijayprasad/usagecontract.git"
+  },
+  "homepage": "https://github.com/javvadivijayprasad/usagecontract#readme",
+  "bugs": {
+    "url": "https://github.com/javvadivijayprasad/usagecontract/issues"
+  }
+}

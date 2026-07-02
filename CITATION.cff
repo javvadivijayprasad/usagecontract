@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use usagecontract in your research or software, please cite it."
+title: "usagecontract: usage-aware, spec-anchored contract testing"
+abstract: >-
+  usagecontract derives each API consumer's contract automatically from observed
+  test traffic and anchors it to the provider's OpenAPI specification, flagging a
+  spec change as breaking only for the consumers that actually depend on the
+  changed field.
+type: software
+authors:
+  - family-names: Prasad
+    given-names: Vijay
+    email: jvijayprasad@gmail.com
+version: 1.0.0
+date-released: "2026-07-02"
+license: MIT
+repository-code: "https://github.com/javvadivijayprasad/usagecontract"
+url: "https://github.com/javvadivijayprasad/usagecontract"
+keywords:
+  - contract testing
+  - consumer-driven contracts
+  - OpenAPI
+  - breaking changes
+  - API evolution
+  - microservices
+preferred-citation:
+  type: article
+  title: "Usage-Aware, Spec-Anchored Contract Testing: Deriving Consumer Contracts from Observed Traffic"
+  authors:
+    - family-names: Prasad
+      given-names: Vijay
+      email: jvijayprasad@gmail.com
+  year: 2026
+  notes: "Preprint / under submission. Replace with the published venue and DOI when available."
