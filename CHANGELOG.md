@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.0
+- HTTP client adapters for **got** and **undici** (`record.installGot`, `record.installUndici`),
+  in addition to fetch and axios.
+- Test suite: 33 tests.
+
 ## 1.0.0
 - Test suite: 31 tests (compat, recorder proxy, coverage, registry, CLI, real HTTP integration),
   ~97% line coverage enforced in CI via npm run test:coverage (90% lines / 75% branches / 90% funcs).

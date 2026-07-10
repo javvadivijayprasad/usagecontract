@@ -1,7 +1,9 @@
 'use strict';
-// Traffic recorder. Two integration points:
-//   record.install(spec)        -> patches global fetch (Node 18+)
-//   record.installAxios(ax,spec)-> adds interceptors to an axios instance
+// Traffic recorder. Integration points:
+//   record.install(spec)            -> patches global fetch (Node 18+)
+//   record.installAxios(ax, spec)   -> adds interceptors to an axios instance
+//   record.installGot(got, spec)    -> returns a got instance with recording hooks
+//   record.installUndici(u, spec)   -> returns an undici.request wrapper
 // Each response body is wrapped in a deep read-tracking Proxy; a dependency is
 // recorded only when a primitive field is read, or a query param is sent.
 let TEMPLATES = [];
@@ -39,6 +41,8 @@ function noteSend(op, url, params) {
   try { const u = new URL(url, 'http://localhost'); for (const n of u.searchParams.keys()) rec(op, 'send', n); } catch {}
   if (params && typeof params === 'object') for (const n of Object.keys(params)) rec(op, 'send', n);
 }
+function pathnameOf(url) { try { return new URL(typeof url === 'string' ? url : (url.href || String(url)), 'http://localhost').pathname; } catch { return ''; } }
+
 function install(spec) { configure(spec); if (!ORIG) ORIG = globalThis.fetch; globalThis.fetch = async function (input, init) {
   const method = ((init && init.method) || 'GET').toUpperCase();
   const url = typeof input === 'string' ? input : input.url; const u = new URL(url, 'http://localhost');
@@ -47,7 +51,7 @@ function install(spec) { configure(spec); if (!ORIG) ORIG = globalThis.fetch; gl
   return { status: resp.status, ok: resp.ok, headers: resp.headers, json: async () => (state.active && json !== null ? wrap(json, '', op) : json), text: async () => text };
 }; }
 function uninstall() { if (ORIG) globalThis.fetch = ORIG; }
-// Axios adapter: wrap response.data so the consumer's reads are tracked.
+
 function installAxios(axios, spec) {
   configure(spec);
   axios.interceptors.request.use((cfg) => {
@@ -64,6 +68,45 @@ function installAxios(axios, spec) {
   });
   return axios;
 }
+
+// got: use responseType 'json' so the afterResponse body is a parsed object.
+function installGot(got, spec) {
+  configure(spec);
+  return got.extend({
+    hooks: {
+      beforeRequest: [(options) => {
+        const method = (options.method || 'GET').toUpperCase();
+        const op = state.active ? match(method, pathnameOf(options.url)) : null;
+        options.context = Object.assign({}, options.context, { __uc_op: op });
+        if (op) { try { for (const n of options.url.searchParams.keys()) rec(op, 'send', n); } catch {} }
+      }],
+      afterResponse: [(response) => {
+        const op = response.request && response.request.options && response.request.options.context && response.request.options.context.__uc_op;
+        if (state.active && op && response.body !== null && typeof response.body === 'object') response.body = wrap(response.body, '', op);
+        return response;
+      }],
+    },
+  });
+}
+
+// undici: wrap the returned body.json() so reads are tracked.
+function installUndici(undici, spec) {
+  configure(spec);
+  const orig = undici.request;
+  return function request(url, opts) {
+    const method = ((opts && opts.method) || 'GET').toUpperCase();
+    const op = state.active ? match(method, pathnameOf(url)) : null;
+    if (op) noteSend(op, typeof url === 'string' ? url : (url.href || ''), opts && opts.query);
+    return orig.call(undici, url, opts).then((res) => {
+      if (res && res.body && typeof res.body.json === 'function') {
+        const oj = res.body.json.bind(res.body);
+        res.body.json = async () => { const j = await oj(); return (state.active && op && j !== null && typeof j === 'object') ? wrap(j, '', op) : j; };
+      }
+      return res;
+    });
+  };
+}
+
 function startConsumer(meta) { state.active = true; state.deps = new Map(); state.specRef = (meta && meta.specRef) || null; state.provider = (meta && meta.provider) || null; }
 function stopConsumer(consumer) { state.active = false; return { consumer, provider: state.provider, specRef: state.specRef, dependencies: [...state.deps.values()] }; }
-module.exports = { install, uninstall, installAxios, configure, startConsumer, stopConsumer, wrap };
+module.exports = { install, uninstall, installAxios, installGot, installUndici, configure, startConsumer, stopConsumer, wrap };

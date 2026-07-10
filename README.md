@@ -12,7 +12,7 @@ reads*, and fails CI only when a provider spec change breaks a consumer that tru
 changed field. You get Pact-style "who breaks?" precision with the cost of a linter: no DSL, no
 duplicate contract file, no broker.
 
-> `1.0.0`. Node ≥ 18. HTTP clients: global `fetch` and `axios` (`got`/`undici` on the roadmap).
+> `1.0.0`. Node ≥ 18. HTTP clients: `fetch`, `axios`, `got`, and `undici`.
 > **New here?** Read **[GETTING-STARTED.md](GETTING-STARTED.md)** for the full walkthrough.
 
 ---
@@ -97,6 +97,9 @@ afterAll(() => record.flush('web-app', { dir: './profiles' }));
 Works with any runner (Jest, Vitest, `node --test`, Mocha). Run your tests, then commit the
 generated `profiles/web-app.profile.json`.
 
+**got / undici:** same idea via `record.installGot(gotInstance, spec)` (use `responseType: 'json'`)
+or `const request = record.installUndici(require('undici'), spec)`.
+
 ### 2. Gate provider changes (CLI)
 
 ```bash
@@ -177,7 +180,7 @@ and scalars. OpenAPI 3.0 and 3.1.
   coverage reporting (built in) and merge profiles across runs / production traffic.
 - **Enum exhaustiveness** (a consumer that switches on every enum value) can't be observed from
   traffic — annotate such dependencies if needed.
-- HTTP clients: `fetch` and `axios` today.
+- HTTP clients: `fetch`, `axios`, `got`, and `undici`.
 
 ## Development
 
