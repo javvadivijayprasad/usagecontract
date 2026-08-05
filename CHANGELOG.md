@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0
+- Spec **registry**: store provider specs by ref (`orders@1.2.0`); `can-i-deploy` resolves each
+  consumer's baseline automatically from `--registry` (no manual `--base` needed).
+- Multi-provider gating (`--provider`, inferred from the candidate spec title).
+- `--json` output for `can-i-deploy` and `coverage`.
+- `push` / `pull` commands to publish/fetch specs and profiles via the registry.
+- Test suite: 39 tests.
+
 ## 1.1.0
 - HTTP client adapters for **got** and **undici** (`record.installGot`, `record.installUndici`),
   in addition to fetch and axios.

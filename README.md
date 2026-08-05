@@ -145,6 +145,21 @@ usagecontract verify --spec <spec> --profiles <dir>
     Check every recorded profile is satisfied by the spec.
 ```
 
+## Registry mode (no manual `--base`)
+
+Store each provider spec version in a registry; `can-i-deploy` then resolves every consumer's
+baseline automatically from its profile `specRef`:
+
+```bash
+usagecontract push --registry ./registry --spec ./orders.openapi.json --ref orders@1.0.0
+usagecontract push --registry ./registry --profiles ./profiles
+usagecontract can-i-deploy --registry ./registry --candidate ./orders.openapi.next.json --profiles ./profiles
+```
+
+Add `--json` to `can-i-deploy` / `coverage` for machine-readable output. `push` / `pull` sync
+specs and profiles so provider and consumer CI can share them. `--provider` (or the candidate
+spec title) scopes a run to one provider when the registry holds several.
+
 ## Programmatic API
 
 ```js
