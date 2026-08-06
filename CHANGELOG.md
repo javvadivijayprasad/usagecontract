@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+- **Cross-run profile merging**: `record.flush(consumer, { merge: true })` unions with an existing
+  profile on disk (accumulate across test runs / CI shards); `record.merge(a, b)` helper.
+- **Enum-exhaustiveness annotation** (opt-in): `record.start({ exhaustive: [{ op, field }] })` marks
+  a read dep as exhaustively-matched and auto-populates its enum from the spec, so a widened enum is
+  correctly flagged breaking for that consumer — closing the previously-disclosed blind spot.
+- Test suite: 44 tests.
+
 ## 1.2.0
 - Spec **registry**: store provider specs by ref (`orders@1.2.0`); `can-i-deploy` resolves each
   consumer's baseline automatically from `--registry` (no manual `--base` needed).

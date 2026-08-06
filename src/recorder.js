@@ -4,10 +4,15 @@
 //   record.installAxios(ax, spec)   -> adds interceptors to an axios instance
 //   record.installGot(got, spec)    -> returns a got instance with recording hooks
 //   record.installUndici(u, spec)   -> returns an undici.request wrapper
-// Each response body is wrapped in a deep read-tracking Proxy; a dependency is
-// recorded only when a primitive field is read, or a query param is sent.
+// A dependency is recorded only when a primitive field is read, or a query param is sent.
+// start({ exhaustive: [{op, field}] }) opts a read dep into exhaustive-enum tracking, so a
+// widened enum on that field is flagged breaking (the one thing traffic alone can't infer).
+const { getResponseSchema, resolveField } = require('./spec');
+
 let TEMPLATES = [];
+let SPEC = null;
 function configure(spec) {
+  SPEC = spec || null;
   TEMPLATES = [];
   for (const [p, item] of Object.entries((spec && spec.paths) || {})) {
     for (const m of Object.keys(item)) {
@@ -19,7 +24,7 @@ function configure(spec) {
 }
 function match(method, pathname) { const h = TEMPLATES.find(t => t.method === method && t.re.test(pathname)); return h ? h.op : null; }
 function inferType(v) { if (typeof v === 'number') return Number.isInteger(v) ? 'integer' : 'number'; return typeof v; }
-let ORIG = null; const state = { active: false, deps: new Map(), specRef: null, provider: null };
+let ORIG = null; const state = { active: false, deps: new Map(), specRef: null, provider: null, exhaustive: [] };
 function key(o, k, f) { return o + '|' + k + '|' + f; }
 function rec(op, kind, field, type) { if (!op) return; const k = key(op, kind, field); if (!state.deps.has(k)) state.deps.set(k, Object.assign({ op, kind, field }, type ? { type } : {})); }
 function wrapEl(el, cp, op) { if (el !== null && typeof el === 'object') return wrap(el, cp, op); rec(op, 'read', cp, inferType(el)); return el; }
@@ -68,15 +73,12 @@ function installAxios(axios, spec) {
   });
   return axios;
 }
-
-// got: use responseType 'json' so the afterResponse body is a parsed object.
 function installGot(got, spec) {
   configure(spec);
   return got.extend({
     hooks: {
       beforeRequest: [(options) => {
-        const method = (options.method || 'GET').toUpperCase();
-        const op = state.active ? match(method, pathnameOf(options.url)) : null;
+        const op = state.active ? match((options.method || 'GET').toUpperCase(), pathnameOf(options.url)) : null;
         options.context = Object.assign({}, options.context, { __uc_op: op });
         if (op) { try { for (const n of options.url.searchParams.keys()) rec(op, 'send', n); } catch {} }
       }],
@@ -88,8 +90,6 @@ function installGot(got, spec) {
     },
   });
 }
-
-// undici: wrap the returned body.json() so reads are tracked.
 function installUndici(undici, spec) {
   configure(spec);
   const orig = undici.request;
@@ -107,6 +107,20 @@ function installUndici(undici, spec) {
   };
 }
 
-function startConsumer(meta) { state.active = true; state.deps = new Map(); state.specRef = (meta && meta.specRef) || null; state.provider = (meta && meta.provider) || null; }
-function stopConsumer(consumer) { state.active = false; return { consumer, provider: state.provider, specRef: state.specRef, dependencies: [...state.deps.values()] }; }
+// Opt-in: mark chosen read deps as exhaustive and pull their enum from the spec, so a widened
+// enum is caught. Called at stopConsumer time.
+function annotateExhaustive(deps) {
+  if (!state.exhaustive || !state.exhaustive.length || !SPEC) return deps;
+  for (const { op, field } of state.exhaustive) {
+    const d = deps.find((x) => x.kind === 'read' && x.op === op && x.field === field);
+    if (!d) continue;
+    const resp = getResponseSchema(SPEC, op);
+    const r = resp && resolveField(SPEC, resp, field);
+    if (r && r.found && r.schema && Array.isArray(r.schema.enum)) { d.exhaustive = true; d.enum = r.schema.enum.slice(); }
+  }
+  return deps;
+}
+
+function startConsumer(meta) { state.active = true; state.deps = new Map(); state.specRef = (meta && meta.specRef) || null; state.provider = (meta && meta.provider) || null; state.exhaustive = (meta && meta.exhaustive) || []; }
+function stopConsumer(consumer) { state.active = false; return { consumer, provider: state.provider, specRef: state.specRef, dependencies: annotateExhaustive([...state.deps.values()]) }; }
 module.exports = { install, uninstall, installAxios, installGot, installUndici, configure, startConsumer, stopConsumer, wrap };

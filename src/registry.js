@@ -22,4 +22,19 @@ function listSpecs(dir) { const d = specsDir(dir); if (!fs.existsSync(d)) return
 function pushProfiles(fromDir, registryDir) { const dst = profilesDir(registryDir); ensure(dst); let n = 0; for (const p of loadProfiles(fromDir)) { saveProfile(dst, p); n++; } return n; }
 function pullProfiles(registryDir, toDir) { const src = profilesDir(registryDir); ensure(toDir); let n = 0; for (const p of loadProfiles(src)) { saveProfile(toDir, p); n++; } return n; }
 
-module.exports = { saveProfile, loadProfiles, loadSpec, saveSpec, loadSpecByRef, listSpecs, pushProfiles, pullProfiles, profilesDir, specsDir };
+// Union two profiles' dependencies (for cross-run / CI-shard merging).
+function mergeDeps(a, b) {
+  const byKey = new Map();
+  for (const d of (a || []).concat(b || [])) {
+    const k = d.op + '|' + d.kind + '|' + d.field;
+    const prev = byKey.get(k);
+    byKey.set(k, prev ? Object.assign({}, prev, d) : d); // later run wins on annotations (enum/exhaustive/type)
+  }
+  return [...byKey.values()];
+}
+function mergeProfiles(a, b) {
+  return { consumer: a.consumer || b.consumer, provider: a.provider || b.provider, specRef: a.specRef || b.specRef, dependencies: mergeDeps(a.dependencies, b.dependencies) };
+}
+function loadProfile(dir, consumer) { const f = path.join(dir, consumer + '.profile.json'); return fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : null; }
+
+module.exports = { saveProfile, loadProfile, loadProfiles, loadSpec, saveSpec, loadSpecByRef, listSpecs, pushProfiles, pullProfiles, mergeProfiles, mergeDeps, profilesDir, specsDir };

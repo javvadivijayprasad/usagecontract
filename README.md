@@ -192,10 +192,26 @@ and scalars. OpenAPI 3.0 and 3.1.
 ## Limitations
 
 - A profile reflects only **exercised** paths; untested consumer code is invisible. Pair with
-  coverage reporting (built in) and merge profiles across runs / production traffic.
-- **Enum exhaustiveness** (a consumer that switches on every enum value) can't be observed from
-  traffic — annotate such dependencies if needed.
+  built-in coverage reporting and accumulate across runs with `record.flush(name, { merge: true })`.
+- **Enum exhaustiveness** can't be inferred from traffic, so it is **opt-in**: mark such deps with
+  `record.start({ exhaustive: [{ op, field }] })` and a widened enum is flagged breaking for them.
 - HTTP clients: `fetch`, `axios`, `got`, and `undici`.
+
+## Advanced
+
+**Accumulate coverage across CI shards / runs** — union each run into the same profile:
+
+```js
+afterAll(() => record.flush('web-app', { dir: './profiles', merge: true }));
+```
+
+**Exhaustive enums** — if a consumer switches on every value of an enum, opt it in so a widened
+enum is treated as breaking for that consumer:
+
+```js
+record.start({ provider: 'orders', specRef: 'orders@1.0.0',
+  exhaustive: [{ op: 'GET /orders/{id}', field: 'status' }] });
+```
 
 ## Development
 
