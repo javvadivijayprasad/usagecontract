@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage help and support
+    url: https://github.com/javvadivijayprasad/usagecontract/blob/main/SUPPORT.md
+    about: How to get help using usagecontract.
+  - name: Security report
+    url: https://github.com/javvadivijayprasad/usagecontract/blob/main/CONTRIBUTING.md
+    about: Please report suspected vulnerabilities privately, not as a public issue.
