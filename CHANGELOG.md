@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+- **GraphQL body inspection**: a request body of the form `{ query, variables }` is inspected
+  directly — the query's selection set becomes read dependencies and the variables become send
+  dependencies. Runs automatically for GraphQL `POST`s through a patched global `fetch`, or call
+  `record.graphql(body)` explicitly. New `parseGraphQL(query)` helper exposes the parse. No new
+  runtime dependency (the parser is built-in).
+- Test suite: 62 tests.
+
 ## 1.3.0
 - **Cross-run profile merging**: `record.flush(consumer, { merge: true })` unions with an existing
   profile on disk (accumulate across test runs / CI shards); `record.merge(a, b)` helper.

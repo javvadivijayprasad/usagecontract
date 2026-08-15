@@ -8,6 +8,7 @@
 // start({ exhaustive: [{op, field}] }) opts a read dep into exhaustive-enum tracking, so a
 // widened enum on that field is flagged breaking (the one thing traffic alone can't infer).
 const { getResponseSchema, resolveField } = require('./spec');
+const { parseGraphQL } = require('./graphql');
 
 let TEMPLATES = [];
 let SPEC = null;
@@ -48,12 +49,31 @@ function noteSend(op, url, params) {
 }
 function pathnameOf(url) { try { return new URL(typeof url === 'string' ? url : (url.href || String(url)), 'http://localhost').pathname; } catch { return ''; } }
 
+// GraphQL body inspection. A request body of the form { query, variables } is inspected
+// directly: the query's selection set becomes read deps and the variables become send
+// deps. The op is derived from the GraphQL operation (e.g. "QUERY GetOrder"), independent
+// of any URL path. Returns the op if the body was GraphQL, else null.
+function gqlOp(parsed) { return parsed.type.toUpperCase() + ' ' + (parsed.name || 'anonymous'); }
+function observeGraphQL(body) {
+  if (!state.active) return null;
+  let payload = body;
+  if (typeof body === 'string') { try { payload = JSON.parse(body); } catch { return null; } }
+  if (!payload || typeof payload !== 'object' || typeof payload.query !== 'string') return null;
+  const parsed = parseGraphQL(payload.query);
+  const op = gqlOp(parsed);
+  for (const f of parsed.fields) rec(op, 'read', f);
+  const sent = (payload.variables && typeof payload.variables === 'object') ? Object.keys(payload.variables) : parsed.variables;
+  for (const n of sent) rec(op, 'send', n);
+  return op;
+}
+
 function install(spec) { configure(spec); if (!ORIG) ORIG = globalThis.fetch; globalThis.fetch = async function (input, init) {
   const method = ((init && init.method) || 'GET').toUpperCase();
   const url = typeof input === 'string' ? input : input.url; const u = new URL(url, 'http://localhost');
-  const op = state.active ? match(method, u.pathname) : null; if (op) noteSend(op, url);
+  const gql = (state.active && method === 'POST' && init && init.body != null) ? observeGraphQL(init.body) : null;
+  const op = (!gql && state.active) ? match(method, u.pathname) : null; if (op) noteSend(op, url);
   const resp = await ORIG(input, init); const text = await resp.text(); let json; try { json = JSON.parse(text); } catch { json = null; }
-  return { status: resp.status, ok: resp.ok, headers: resp.headers, json: async () => (state.active && json !== null ? wrap(json, '', op) : json), text: async () => text };
+  return { status: resp.status, ok: resp.ok, headers: resp.headers, json: async () => (state.active && !gql && json !== null ? wrap(json, '', op) : json), text: async () => text };
 }; }
 function uninstall() { if (ORIG) globalThis.fetch = ORIG; }
 
@@ -123,4 +143,4 @@ function annotateExhaustive(deps) {
 
 function startConsumer(meta) { state.active = true; state.deps = new Map(); state.specRef = (meta && meta.specRef) || null; state.provider = (meta && meta.provider) || null; state.exhaustive = (meta && meta.exhaustive) || []; }
 function stopConsumer(consumer) { state.active = false; return { consumer, provider: state.provider, specRef: state.specRef, dependencies: annotateExhaustive([...state.deps.values()]) }; }
-module.exports = { install, uninstall, installAxios, installGot, installUndici, configure, startConsumer, stopConsumer, wrap };
+module.exports = { install, uninstall, installAxios, installGot, installUndici, configure, startConsumer, stopConsumer, wrap, observeGraphQL };

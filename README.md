@@ -176,6 +176,27 @@ isBreaking(beforeSpec, afterSpec, profile); // { breaking, violations }
 coverage(spec, profile);               // { pct, read, reachable, perOp }
 ```
 
+## GraphQL
+
+For GraphQL, the query's **selection set is the usage profile** — it already declares exactly what
+the consumer depends on, so no response tracking is needed. GraphQL `POST`s made through a patched
+global `fetch` are inspected automatically; you can also record a body directly:
+
+```js
+const { record, parseGraphQL } = require('usagecontract');
+
+record.start({ provider: 'orders', specRef: 'orders@1' });
+record.graphql({ query: 'query GetOrder($id: ID!){ order(id:$id){ id items { sku } } }',
+                 variables: { id: 'o1' } });
+const profile = record.stop('web-app');
+// read deps: order, order.id, order.items, order.items.sku   send deps: id
+
+parseGraphQL('{ me { id } }'); // { type, name, variables, fields } — the parser on its own
+```
+
+Aliases resolve to the underlying field name, inline fragments are followed, and variables become
+send dependencies. The parser is built-in (no `graphql` package required).
+
 ## Where does this run?
 
 - **Consumer-side:** consumers record profiles; the provider's release pipeline pulls the shared
@@ -195,7 +216,8 @@ and scalars. OpenAPI 3.0 and 3.1.
   built-in coverage reporting and accumulate across runs with `record.flush(name, { merge: true })`.
 - **Enum exhaustiveness** can't be inferred from traffic, so it is **opt-in**: mark such deps with
   `record.start({ exhaustive: [{ op, field }] })` and a widened enum is flagged breaking for them.
-- HTTP clients: `fetch`, `axios`, `got`, and `undici`.
+- HTTP clients: `fetch`, `axios`, `got`, and `undici`. GraphQL over `fetch` is inspected from the
+  request body (see [GraphQL](#graphql)).
 
 ## Advanced
 

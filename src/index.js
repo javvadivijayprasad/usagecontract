@@ -4,6 +4,7 @@ const recorder = require('./recorder');
 const { compat, isBreaking } = require('./compat');
 const { coverage } = require('./coverage');
 const registry = require('./registry');
+const { parseGraphQL } = require('./graphql');
 
 const record = {
   install: (spec) => recorder.install(spec),
@@ -13,6 +14,10 @@ const record = {
   installUndici: (undici, spec) => recorder.installUndici(undici, spec),
   start: (meta) => recorder.startConsumer(meta),
   stop: (consumer) => recorder.stopConsumer(consumer),
+  // Inspect a GraphQL request body ({ query, variables }) directly, recording the
+  // selection set as read deps and the variables as send deps. Also runs automatically
+  // for GraphQL POSTs made through a patched global fetch.
+  graphql: (body) => recorder.observeGraphQL(body),
   // Stop + write the profile. { merge: true } unions with an existing profile on disk
   // (for accumulating across test runs / CI shards).
   flush: (consumer, opts) => {
@@ -28,4 +33,4 @@ const record = {
   merge: (a, b) => registry.mergeProfiles(a, b),
 };
 
-module.exports = { record, compat, isBreaking, coverage, registry, wrap: recorder.wrap };
+module.exports = { record, compat, isBreaking, coverage, registry, wrap: recorder.wrap, parseGraphQL };
