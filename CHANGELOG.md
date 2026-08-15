@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.4.0
 - **GraphQL body inspection**: a request body of the form `{ query, variables }` is inspected
   directly — the query's selection set becomes read dependencies and the variables become send
   dependencies. Runs automatically for GraphQL `POST`s through a patched global `fetch`, or call
