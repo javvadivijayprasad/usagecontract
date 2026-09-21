@@ -1,7 +1,11 @@
 'use strict';
+const fs = require('fs');
+const path = require('path');
 const { compat, isBreaking } = require('./compat');
 const { coverage } = require('./coverage');
 const registry = require('./registry');
+const { profileToJsonSchema } = require('./jsonschema');
+const { startMock } = require('./mock');
 
 function parse(argv) { const o = { _: [] }; for (let i = 0; i < argv.length; i++) { const a = argv[i]; if (a.startsWith('--')) { const k = a.slice(2); const v = (argv[i + 1] && !argv[i + 1].startsWith('--')) ? argv[++i] : true; o[k] = v; } else o._.push(a); } return o; }
 const WARN = 0.8;
@@ -24,6 +28,14 @@ const HELP = [
   '      Store a provider spec (by ref) and/or publish profiles into the registry.',
   '  pull --registry <dir> --profiles-out <dir>',
   '      Fetch profiles from the registry into a local folder.',
+  '',
+  '  export-schema --profiles <dir> [--out <dir>] [--json]',
+  '      Export each consumer profile to JSON Schema (the minimal shape it depends on),',
+  '      grouped by operation. With --out, write <consumer>.schema.json files.',
+  '',
+  '  mock --profiles <dir> [--port <n>]',
+  '      Start a local HTTP server that answers each recorded operation with schema-valid',
+  '      fake data derived from the profiles — run a consumer with no real provider present.',
 ].join('\n');
 
 function emit(json, obj, textFn) { if (json) console.log(JSON.stringify(obj, null, 2)); else textFn(); }
@@ -93,6 +105,41 @@ function verify(o) {
   return 1;
 }
 
+function exportSchema(o) {
+  if (!o.profiles) { console.error('need --profiles <dir>'); return 2; }
+  const profiles = registry.loadProfiles(o.profiles);
+  if (profiles.length === 0) { console.error('no profiles found in ' + o.profiles); return 2; }
+  const out = {};
+  for (const p of profiles) out[p.consumer] = profileToJsonSchema(p);
+  if (o.out && o.out !== true) {
+    fs.mkdirSync(o.out, { recursive: true });
+    for (const [consumer, schemas] of Object.entries(out)) {
+      const f = path.join(o.out, consumer + '.schema.json');
+      fs.writeFileSync(f, JSON.stringify(schemas, null, 2));
+      console.log('wrote ' + f);
+    }
+    return 0;
+  }
+  emit(!!o.json, out, () => {
+    for (const [consumer, schemas] of Object.entries(out)) {
+      console.log(consumer + ':');
+      for (const op of Object.keys(schemas)) console.log('  ' + op);
+    }
+  });
+  return 0;
+}
+
+function mockCmd(o) {
+  if (!o.profiles) { console.error('need --profiles <dir>'); return 2; }
+  const profiles = registry.loadProfiles(o.profiles);
+  if (profiles.length === 0) { console.error('no profiles found in ' + o.profiles); return 2; }
+  const port = (o.port != null && o.port !== true) ? Number(o.port) : 3000;
+  startMock(profiles, { port });
+  console.log('usagecontract mock listening on http://localhost:' + port);
+  console.log('serving ' + profiles.length + ' profile(s) as schema-valid fake responses; Ctrl+C to stop.');
+  return 0;
+}
+
 function push(o) {
   if (!o.registry) { console.error('need --registry <dir>'); return 2; }
   let did = false;
@@ -115,6 +162,8 @@ function main(argv) {
     if (cmd === 'verify') return verify(o);
     if (cmd === 'push') return push(o);
     if (cmd === 'pull') return pull(o);
+    if (cmd === 'export-schema') return exportSchema(o);
+    if (cmd === 'mock') return mockCmd(o);
     console.error('unknown command: ' + cmd); console.log(HELP); return 2;
   } catch (e) {
     if (e && e.code === 'ENOENT') console.error('error: file not found: ' + e.path);

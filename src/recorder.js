@@ -42,10 +42,19 @@ function obj(o, path, op) { return new Proxy(o, { get(t, p, r) {
   const cp = path ? path + '.' + p : p, val = t[p];
   if (val !== null && typeof val === 'object') return wrap(val, cp, op);
   rec(op, 'read', cp, inferType(val)); return val; } }); }
+// axios param shapes differ by version: v0.x passes a plain object, v1.x commonly a
+// URLSearchParams. Object.keys() silently returns [] for URLSearchParams, so handle both
+// (plus Map-like) to record sent query params regardless of the axios version in use.
+function paramNames(params) {
+  if (!params || typeof params !== 'object') return [];
+  if (typeof URLSearchParams !== 'undefined' && params instanceof URLSearchParams) return [...params.keys()];
+  if (typeof params.keys === 'function' && typeof params.forEach === 'function') return [...params.keys()];
+  return Object.keys(params);
+}
 function noteSend(op, url, params) {
   if (!op) return;
   try { const u = new URL(url, 'http://localhost'); for (const n of u.searchParams.keys()) rec(op, 'send', n); } catch {}
-  if (params && typeof params === 'object') for (const n of Object.keys(params)) rec(op, 'send', n);
+  for (const n of paramNames(params)) rec(op, 'send', n);
 }
 function pathnameOf(url) { try { return new URL(typeof url === 'string' ? url : (url.href || String(url)), 'http://localhost').pathname; } catch { return ''; } }
 

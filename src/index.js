@@ -5,6 +5,8 @@ const { compat, isBreaking } = require('./compat');
 const { coverage } = require('./coverage');
 const registry = require('./registry');
 const { parseGraphQL } = require('./graphql');
+const { profileToJsonSchema } = require('./jsonschema');
+const mock = require('./mock');
 
 const record = {
   install: (spec) => recorder.install(spec),
@@ -33,4 +35,5 @@ const record = {
   merge: (a, b) => registry.mergeProfiles(a, b),
 };
 
-module.exports = { record, compat, isBreaking, coverage, registry, wrap: recorder.wrap, parseGraphQL };
+module.exports = { record, compat, isBreaking, coverage, registry, wrap: recorder.wrap, parseGraphQL, profileToJsonSchema,
+  mock: { createServer: mock.createMockServer, start: mock.startMock, fake: mock.fakeFromSchema } };

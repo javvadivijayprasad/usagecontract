@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.6.0
+- **Mock server from per-consumer usage**: `usagecontract mock --profiles <dir> [--port <n>]`
+  starts a local HTTP server that answers each recorded operation with schema-valid fake data
+  derived from the profiles (reuses the JSON Schema export) — run a consumer with no real
+  provider present. Programmatic `mock.createServer(profiles)` / `mock.start(profiles, {port})` /
+  `mock.fake(schema)`. Deliberately minimal: one valid response per operation, no stateful
+  scenarios or request matching.
+
+## 1.5.0
+- **Export usage profiles to JSON Schema**: `profileToJsonSchema(profile)` rebuilds the nested
+  object/array structure from a profile's dot/bracket field paths and returns a standard
+  draft-07 JSON Schema per operation — the minimal shape the consumer depends on. New CLI
+  command `export-schema --profiles <dir> [--out <dir>] [--json]`. Read/export only; gating is
+  unchanged.
+
+## 1.4.1
+- **axios v0.x / v1.x compatibility**: query params are now recorded whether the caller passes
+  a plain object (axios 0.x) or a `URLSearchParams` (axios 1.x). Previously `URLSearchParams`
+  params were silently dropped from the recorded profile.
+
 ## 1.4.0
 - **GraphQL body inspection**: a request body of the form `{ query, variables }` is inspected
   directly — the query's selection set becomes read dependencies and the variables become send

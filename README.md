@@ -174,7 +174,38 @@ record.flush('web-app', { dir });      // stop + write to a folder
 compat(spec, profile);                 // { compatible, violations }
 isBreaking(beforeSpec, afterSpec, profile); // { breaking, violations }
 coverage(spec, profile);               // { pct, read, reachable, perOp }
+
+profileToJsonSchema(profile);          // { "<op>": <JSON Schema> } — export a profile
 ```
+
+## Export a profile to JSON Schema
+
+A profile is a flat list of dependencies; `profileToJsonSchema` reshapes it into a standard
+draft-07 JSON Schema per operation — the minimal response shape a consumer depends on — so other
+tooling (validators, docs, mock generators) can consume it:
+
+```bash
+usagecontract export-schema --profiles ./profiles --out ./schemas   # writes <consumer>.schema.json
+usagecontract export-schema --profiles ./profiles --json            # print to stdout
+```
+
+`items[].sku` becomes an array of objects with a `sku` property; consumed fields are marked
+`required`; enum-annotated fields carry their `enum`. This is a read/export path — it does not
+change gating.
+
+## Mock a provider from usage
+
+When the real provider isn't available, serve a mock built from what consumers actually use:
+
+```bash
+usagecontract mock --profiles ./profiles --port 3000
+```
+
+It starts a local HTTP server that answers each recorded operation with schema-valid fake data
+(enum fields get a valid value, arrays get a sample element). Point your consumer at it and run
+with no real provider. Unlike whole-spec mockers, it serves exactly the per-consumer shape.
+Programmatic: `const { mock } = require('usagecontract'); const server = mock.createServer(profiles);`.
+It is deliberately minimal — one valid response per operation, no stateful scenarios.
 
 ## GraphQL
 
