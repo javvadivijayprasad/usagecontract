@@ -12,8 +12,9 @@ reads*, and fails CI only when a provider spec change breaks a consumer that tru
 changed field. You get Pact-style "who breaks?" precision with the cost of a linter: no DSL, no
 duplicate contract file, no broker.
 
-> `1.0.0`. Node ≥ 18. HTTP clients: `fetch`, `axios`, `got`, and `undici`.
+> `1.6.0`. Node ≥ 18. HTTP clients: `fetch`, `axios`, `got`, and `undici`.
 > **New here?** Read **[GETTING-STARTED.md](GETTING-STARTED.md)** for the full walkthrough.
+> **Coming from Pact?** See **[Migrating a Pact suite](docs/migrating-from-pact.md)**.
 
 ---
 
@@ -279,7 +280,7 @@ npm run example       # end-to-end demo
 If you use usagecontract, please cite it (see [CITATION.cff](CITATION.cff)):
 
 ```
-Prasad, V. (2026). usagecontract: usage-aware, spec-anchored contract testing (v1.0.0) [Software].
+Prasad, V. (2026). usagecontract: usage-aware, spec-anchored contract testing (v1.6.0) [Software].
 ```
 
 Underlying method: *"Usage-Aware, Spec-Anchored Contract Testing: Deriving Consumer Contracts from

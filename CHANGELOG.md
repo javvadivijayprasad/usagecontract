@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.1
+- Docs: add a "Migrating a Pact suite" tutorial; correct stale version strings in the README and
+  CITATION.cff. No code changes.
+
 ## 1.6.0
 - **Mock server from per-consumer usage**: `usagecontract mock --profiles <dir> [--port <n>]`
   starts a local HTTP server that answers each recorded operation with schema-valid fake data
