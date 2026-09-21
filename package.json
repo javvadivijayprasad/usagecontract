@@ -38,7 +38,7 @@
   "devDependencies": {
     "axios": "^1.18.1",
     "got": "^11.8.6",
-    "undici": "^8.7.0"
+    "undici": "^6.21.0"
   },
   "repository": {
     "type": "git",
