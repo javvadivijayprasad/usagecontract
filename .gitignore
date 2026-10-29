@@ -2,3 +2,6 @@ node_modules/
 example/profiles/
 example/*.json
 *.tgz
+
+# research / paper material is kept out of the public package repo
+paper/
