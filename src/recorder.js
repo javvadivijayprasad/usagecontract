@@ -25,7 +25,7 @@ function configure(spec) {
 }
 function match(method, pathname) { const h = TEMPLATES.find(t => t.method === method && t.re.test(pathname)); return h ? h.op : null; }
 function inferType(v) { if (typeof v === 'number') return Number.isInteger(v) ? 'integer' : 'number'; return typeof v; }
-let ORIG = null; const state = { active: false, deps: new Map(), specRef: null, provider: null, exhaustive: [] };
+let ORIG = null; let INSTALLED = false; const state = { active: false, deps: new Map(), specRef: null, provider: null, exhaustive: [] };
 function key(o, k, f) { return o + '|' + k + '|' + f; }
 function rec(op, kind, field, type) { if (!op) return; const k = key(op, kind, field); if (!state.deps.has(k)) state.deps.set(k, Object.assign({ op, kind, field }, type ? { type } : {})); }
 function wrapEl(el, cp, op) { if (el !== null && typeof el === 'object') return wrap(el, cp, op); rec(op, 'read', cp, inferType(el)); return el; }
@@ -76,15 +76,18 @@ function observeGraphQL(body) {
   return op;
 }
 
-function install(spec) { configure(spec); if (!ORIG) ORIG = globalThis.fetch; globalThis.fetch = async function (input, init) {
+function install(spec) { configure(spec); if (!INSTALLED) { ORIG = globalThis.fetch; INSTALLED = true; } const original = ORIG; globalThis.fetch = async function (input, init) {
   const method = ((init && init.method) || 'GET').toUpperCase();
   const url = typeof input === 'string' ? input : input.url; const u = new URL(url, 'http://localhost');
   const gql = (state.active && method === 'POST' && init && init.body != null) ? observeGraphQL(init.body) : null;
   const op = (!gql && state.active) ? match(method, u.pathname) : null; if (op) noteSend(op, url);
-  const resp = await ORIG(input, init); const text = await resp.text(); let json; try { json = JSON.parse(text); } catch { json = null; }
+  const resp = await original(input, init); const text = await resp.text(); let json; try { json = JSON.parse(text); } catch { json = null; }
   return { status: resp.status, ok: resp.ok, headers: resp.headers, json: async () => (state.active && !gql && json !== null ? wrap(json, '', op) : json), text: async () => text };
 }; }
-function uninstall() { if (ORIG) globalThis.fetch = ORIG; }
+// Idempotent teardown: always restore the exact original global fetch and clear internal state,
+// so repeated install/uninstall cycles never double-wrap or leave a wrapper behind. Safe to call
+// when not installed. (The undici-backed global fetch is what we patch here.)
+function uninstall() { if (!INSTALLED) return; globalThis.fetch = ORIG; ORIG = null; INSTALLED = false; }
 
 function installAxios(axios, spec) {
   configure(spec);

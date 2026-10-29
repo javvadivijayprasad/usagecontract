@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.2
+- **Recorder teardown**: `record.uninstall()` now always restores the exact original global
+  `fetch` and clears internal state, so repeated `install`/`uninstall` cycles never double-wrap or
+  leave a wrapper behind (Node's global `fetch` is undici-backed, so a leaked wrapper would bleed
+  into other code/tests). `uninstall()` is a safe no-op when nothing is installed.
+
 ## 1.6.1
 - Docs: add a "Migrating a Pact suite" tutorial; correct stale version strings in the README and
   CITATION.cff. No code changes.
