@@ -33,3 +33,17 @@ test('missing file returns 2 (friendly error, no throw)', () => {
   assert.strictEqual(quiet(() => main(['can-i-deploy', '--base', 'nope.json', '--candidate', 'nope.json', '--profiles', 'nope'])), 2);
 });
 test('--help returns 0', () => { assert.strictEqual(quiet(() => main(['--help'])), 0); });
+test('--version prints the package version and returns 0', () => {
+  const pkg = require('../package.json');
+  let out = '';
+  const o = console.log; console.log = (s) => { out += (s == null ? '' : s) + '\n'; };
+  try { assert.strictEqual(main(['--version']), 0); } finally { console.log = o; }
+  assert.strictEqual(out.trim(), pkg.version);
+});
+test('-v prints the package version and returns 0', () => {
+  const pkg = require('../package.json');
+  let out = '';
+  const o = console.log; console.log = (s) => { out += (s == null ? '' : s) + '\n'; };
+  try { assert.strictEqual(main(['-v']), 0); } finally { console.log = o; }
+  assert.strictEqual(out.trim(), pkg.version);
+});
