@@ -1,8 +1,12 @@
 # Changelog
 
-## Unreleased
-- Docs: correct the getting-started guide to list got and undici alongside fetch and axios
-  as supported HTTP clients.
+## 1.7.0
+- **`--version` / `-v` flag**: `usagecontract --version` now prints the package version and exits 0
+  (previously it fell through to the unknown-command error). Thanks to
+  [@tnalbant](https://github.com/tnalbant) ([#7](https://github.com/javvadivijayprasad/usagecontract/pull/7)).
+- Docs: correct the getting-started guide to list `got` and `undici` alongside `fetch` and `axios`
+  as supported HTTP clients. Thanks to
+  [@awais-ur-rehman](https://github.com/awais-ur-rehman) ([#6](https://github.com/javvadivijayprasad/usagecontract/pull/6)).
 
 ## 1.6.2
 - **Recorder teardown**: `record.uninstall()` now always restores the exact original global

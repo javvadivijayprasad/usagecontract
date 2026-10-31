@@ -11,8 +11,8 @@ authors:
   - family-names: Prasad
     given-names: Vijay
     email: jvijayprasad@gmail.com
-version: 1.6.0
-date-released: "2026-09-21"
+version: 1.7.0
+date-released: "2026-10-31"
 license: MIT
 repository-code: "https://github.com/javvadivijayprasad/usagecontract"
 url: "https://github.com/javvadivijayprasad/usagecontract"
