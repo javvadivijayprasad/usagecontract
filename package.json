@@ -31,9 +31,9 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node --test test/*.test.js",
+    "test": "node scripts/test.js",
     "example": "node example/run.js",
-    "test:coverage": "node --test --experimental-test-coverage --test-coverage-lines=90 --test-coverage-branches=75 --test-coverage-functions=90 test/*.test.js"
+    "test:coverage": "node scripts/test.js --coverage"
   },
   "devDependencies": {
     "axios": "^1.18.1",
