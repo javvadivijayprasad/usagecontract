@@ -1,9 +1,11 @@
 # usagecontract
 
-[![npm](https://img.shields.io/npm/v/usagecontract.svg)](https://www.npmjs.com/package/usagecontract)
+[![npm](https://img.shields.io/npm/v/@vijaypjavvadi/usagecontract.svg)](https://www.npmjs.com/package/@vijaypjavvadi/usagecontract)
 [![CI](https://github.com/javvadivijayprasad/usagecontract/actions/workflows/ci.yml/badge.svg)](https://github.com/javvadivijayprasad/usagecontract/actions)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![node](https://img.shields.io/badge/node-%E2%89%A518-brightgreen.svg)](package.json)
+[![good first issues](https://img.shields.io/github/issues/javvadivijayprasad/usagecontract/good%20first%20issue?color=7057ff&label=good%20first%20issues)](https://github.com/javvadivijayprasad/usagecontract/labels/good%20first%20issue)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
 **Catch the API changes that actually break your consumers — without writing a single contract.**
 
