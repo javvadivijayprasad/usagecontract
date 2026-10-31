@@ -292,6 +292,8 @@ Thanks to everyone who has helped improve usagecontract:
 
 - [@awais-ur-rehman](https://github.com/awais-ur-rehman) — corrected the supported-HTTP-clients
   documentation ([#6](https://github.com/javvadivijayprasad/usagecontract/pull/6)).
+- [@tnalbant](https://github.com/tnalbant) — added the `--version` / `-v` CLI flag
+  ([#7](https://github.com/javvadivijayprasad/usagecontract/pull/7)).
 
 [![Contributors](https://contrib.rocks/image?repo=javvadivijayprasad/usagecontract)](https://github.com/javvadivijayprasad/usagecontract/graphs/contributors)
 
