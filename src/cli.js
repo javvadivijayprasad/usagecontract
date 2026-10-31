@@ -156,6 +156,7 @@ function pull(o) {
 function main(argv) {
   const cmd = argv[0]; const o = parse(argv.slice(1));
   if (!cmd || cmd === '--help' || cmd === '-h' || o.help) { console.log(HELP); return 0; }
+  if (cmd === '--version' || cmd === '-v') { console.log(require('../package.json').version); return 0; }
   try {
     if (cmd === 'can-i-deploy') return canIDeploy(o);
     if (cmd === 'coverage') return coverageCmd(o);
