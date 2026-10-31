@@ -14,7 +14,7 @@ npm install --save-dev usagecontract
 
 (Before publishing / to try the local copy: `npm install --save-dev ../path/to/usagecontract`.)
 
-Requirements: Node >= 18. HTTP clients supported today: global `fetch` and `axios`.
+Requirements: Node >= 18. HTTP clients supported today: global `fetch`, `axios`, `got`, and `undici`.
 
 ## 2. Get the provider's OpenAPI spec
 
@@ -106,8 +106,8 @@ npm run example # end-to-end can-i-deploy demo
 
 ## Troubleshooting
 
-- **Empty profile / nothing recorded:** your client isn't fetch/axios (got/undici not yet
-  supported), or `record.start()` didn't run before the requests.
+- **Empty profile / nothing recorded:** your client isn't `fetch`, `axios`, `got`, or `undici`,
+  or `record.start()` didn't run before the requests.
 - **`file not found`:** check the `--base`/`--candidate`/`--profiles` paths.
 - **Low coverage warning:** your tests don't exercise much of the API; add tests or record from
   a broader run before trusting a SAFE verdict.
