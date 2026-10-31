@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- Docs: correct the getting-started guide to list got and undici alongside fetch and axios
+  as supported HTTP clients.
+
 ## 1.6.2
 - **Recorder teardown**: `record.uninstall()` now always restores the exact original global
   `fetch` and clears internal state, so repeated `install`/`uninstall` cycles never double-wrap or
