@@ -14,6 +14,7 @@ function minOf(o) { return (o['min-coverage'] != null && o['min-coverage'] !== t
 
 const HELP = [
   'usagecontract - usage-aware, spec-anchored contract testing',
+  '  --version, -v   Print the installed version',
   '',
   'Commands:',
   '  can-i-deploy --candidate <spec> [--base <spec> | --registry <dir> [--provider <name>]]',
