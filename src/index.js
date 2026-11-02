@@ -7,6 +7,7 @@ const registry = require('./registry');
 const { parseGraphQL } = require('./graphql');
 const { profileToJsonSchema } = require('./jsonschema');
 const mock = require('./mock');
+const { usageReport } = require('./report');
 
 const record = {
   install: (spec) => recorder.install(spec),
@@ -36,4 +37,5 @@ const record = {
 };
 
 module.exports = { record, compat, isBreaking, coverage, registry, wrap: recorder.wrap, parseGraphQL, profileToJsonSchema,
-  mock: { createServer: mock.createMockServer, start: mock.startMock, fake: mock.fakeFromSchema } };
+  mock: { createServer: mock.createMockServer, start: mock.startMock, fake: mock.fakeFromSchema },
+  usageReport };

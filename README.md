@@ -154,6 +154,9 @@ usagecontract export-schema --profiles <dir> [--out <dir>] [--json]
 usagecontract mock --profiles <dir> [--port <n>]
     Start a local HTTP server that answers each recorded operation with schema-valid
     fake data derived from the profiles — run a consumer with no real provider present.
+
+usagecontract usage-report --profiles <dir> [--json]
+    Summarize which consumers depend on each operation/field (widely used vs. single-consumer).
 ```
 
 ## Registry mode (no manual `--base`)
@@ -304,6 +307,10 @@ Thanks to everyone who has helped improve usagecontract:
   documentation ([#6](https://github.com/javvadivijayprasad/usagecontract/pull/6)).
 - [@tnalbant](https://github.com/tnalbant) — added the `--version` / `-v` CLI flag
   ([#7](https://github.com/javvadivijayprasad/usagecontract/pull/7)).
+- [@chinmayee5599](https://github.com/chinmayee5599) — added a "Your first contribution" guide
+  ([#13](https://github.com/javvadivijayprasad/usagecontract/pull/13)).
+- [@agenticsymphony-tech](https://github.com/agenticsymphony-tech) — documented `export-schema` and
+  `mock` in the CLI reference ([#18](https://github.com/javvadivijayprasad/usagecontract/pull/18)).
 
 [![Contributors](https://contrib.rocks/image?repo=javvadivijayprasad/usagecontract)](https://github.com/javvadivijayprasad/usagecontract/graphs/contributors)
 
