@@ -15,5 +15,8 @@ they can be reviewed like code and re-synced.
 | 06 | docs: document the `--version` / `-v` flag in README + CLI help | documentation, good first issue |
 | 07 | docs: add got and undici recording snippets to GETTING-STARTED | documentation, good first issue |
 | 08 | feat(cli): add `--json` output to the `verify` command | enhancement, good first issue |
+| 09 | docs: CLI reference is missing export-schema and mock | documentation, good first issue |
+| 10 | feat(cli): include per-operation detail in coverage --json | enhancement, good first issue |
+| 11 | feat(cli): mock should log served operations on startup | enhancement, good first issue |
 
-Keep 3–5 open at any time; when one closes, open the next draft. (#1 and #2 shipped in 1.7.0.)
+Keep 3–5 open at any time; when one closes, open the next draft. (#1, #2 shipped in 1.7.0; #4 merged via PR #13.)
