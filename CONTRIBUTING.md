@@ -15,6 +15,23 @@ npm run example   # end-to-end demo
 Node 18+ is required. The core is dependency-free; HTTP-client adapters load
 their client lazily so it stays an optional peer.
 
+## Your first contribution
+
+New to open source? Follow these steps:
+
+1. Comment on an open issue to claim it.
+2. Fork the repository and clone your fork.
+3. Create a branch for your change.
+4. Make the change, then run:
+   ```bash
+   npm test
+   npm run test:coverage
+   ```
+5. Commit and push your branch.
+6. Open a pull request against `main` and reference the issue (for example, `Fixes #4`).
+
+Keep your changes focused, and ask in the issue if you get stuck.
+
 ## Testing rule
 
 Every behavior change ships with a test, and the suite must stay green with the
