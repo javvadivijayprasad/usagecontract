@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+- **Coverage JSON detail**: `coverage --json` now includes each consumer's existing `perOp`
+  data, with `read`/`reachable` counts and sorted `unread` field paths per operation. This is
+  additive: `consumer`, rounded `pct`, top-level `fail`, threshold behavior, exit codes, and
+  text output are unchanged.
+
 ## 1.7.0
 - **`--version` / `-v` flag**: `usagecontract --version` now prints the package version and exits 0
   (previously it fell through to the unknown-command error). Thanks to

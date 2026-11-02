@@ -141,12 +141,38 @@ Exit code `0` = safe, `1` = breaking (or below coverage floor), `2` = bad input.
 usagecontract can-i-deploy --base <spec> --candidate <spec> --profiles <dir> [--min-coverage <0-100>]
     Fail if the candidate spec breaks any recorded consumer. Prints blast radius + coverage.
 
-usagecontract coverage --spec <spec> --profiles <dir> [--min-coverage <0-100>]
+usagecontract coverage --spec <spec> --profiles <dir> [--min-coverage <0-100>] [--json]
     Report how much of each operation each consumer exercised. Fail below the threshold.
 
 usagecontract verify --spec <spec> --profiles <dir>
     Check every recorded profile is satisfied by the spec.
 ```
+
+With `coverage --json`, stdout is `{ "coverage": [...], "fail": false }`. Each consumer
+keeps its `consumer` name and rounded percentage `pct`, and includes a `perOp` object keyed by
+operation. Each operation reports `read` and `reachable` field counts and a sorted `unread`
+array of field paths (including paths such as `items[].qty`):
+
+```json
+{
+  "coverage": [
+    {
+      "consumer": "web-app",
+      "pct": 67,
+      "perOp": {
+        "GET /orders/{id}": { "read": 2, "reachable": 3, "unread": ["note"] }
+      }
+    }
+  ],
+  "fail": false
+}
+```
+
+Only operations with recorded response reads appear; a fully read operation has `unread: []`,
+and a consumer with no response reads has `perOp: {}` and `pct: 100`. The top-level `fail`
+becomes `true` if any consumer's unrounded coverage is below `--min-coverage`. Exit codes
+remain `0` for passing coverage, `1` below the threshold, and `2` for bad input. For example,
+coverage of 2/3 displays `pct: 67` but fails `--min-coverage 67`.
 
 ## Registry mode (no manual `--base`)
 

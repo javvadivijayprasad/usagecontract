@@ -90,7 +90,7 @@ function coverageCmd(o) {
   if (!o.spec || !o.profiles) { console.error('need --spec, --profiles'); return 2; }
   const spec = registry.loadSpec(o.spec), profiles = registry.loadProfiles(o.profiles), min = minOf(o), json = !!o.json; let fail = false;
   const rows = profiles.map(p => { const c = coverage(spec, p); if (min != null && c.pct < min) fail = true; return { consumer: p.consumer, pct: Math.round(c.pct * 100), perOp: c.perOp }; });
-  emit(json, { coverage: rows.map(r => ({ consumer: r.consumer, pct: r.pct })), fail }, () => {
+  emit(json, { coverage: rows.map(r => ({ consumer: r.consumer, pct: r.pct, perOp: r.perOp })), fail }, () => {
     for (const r of rows) { console.log(r.consumer + ': ' + r.pct + '%'); for (const [op, d] of Object.entries(r.perOp)) if (d.unread.length) console.log('  ' + op + ' unread: ' + d.unread.join(', ')); }
     if (fail) console.log('FAIL: coverage below --min-coverage threshold.');
   });
