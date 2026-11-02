@@ -146,6 +146,14 @@ usagecontract coverage --spec <spec> --profiles <dir> [--min-coverage <0-100>]
 
 usagecontract verify --spec <spec> --profiles <dir>
     Check every recorded profile is satisfied by the spec.
+
+usagecontract export-schema --profiles <dir> [--out <dir>] [--json]
+    Export each consumer profile to JSON Schema (the minimal shape it depends on),
+    grouped by operation. With --out, write <consumer>.schema.json files.
+
+usagecontract mock --profiles <dir> [--port <n>]
+    Start a local HTTP server that answers each recorded operation with schema-valid
+    fake data derived from the profiles — run a consumer with no real provider present.
 ```
 
 ## Registry mode (no manual `--base`)
