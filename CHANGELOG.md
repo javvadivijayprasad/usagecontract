@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+- **Coverage JSON detail**: `coverage --json` now includes each consumer's existing `perOp`
+  data, with `read`/`reachable` counts and sorted `unread` field paths per operation. This is
+  additive: `consumer`, rounded `pct`, top-level `fail`, threshold behavior, exit codes, and
+  text output are unchanged.
+
 ## 1.8.0
 - **`usage-report` command**: `usagecontract usage-report --profiles <dir> [--json]` summarizes,
   per operation and field, which consumers depend on it — so a provider can see which fields are
