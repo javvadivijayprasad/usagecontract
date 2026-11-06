@@ -136,7 +136,9 @@ Exit code `0` = safe, `1` = breaking (or below coverage floor), `2` = bad input.
 ---
 
 ## CLI reference
-
+usagecontract --version
+usagecontract -v
+    Print the installed version.
 ```
 usagecontract can-i-deploy --base <spec> --candidate <spec> --profiles <dir> [--min-coverage <0-100>]
     Fail if the candidate spec breaks any recorded consumer. Prints blast radius + coverage.
