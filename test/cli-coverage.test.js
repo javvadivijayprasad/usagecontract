@@ -44,8 +44,8 @@ function fixture(t) {
   return dir;
 }
 
-function run(dir, args = []) {
-  const result = spawnSync(process.execPath, [cli, 'coverage', '--spec', 'spec.json', '--profiles', 'profiles', ...args],
+function run(dir, args = [], spec = 'spec.json') {
+  const result = spawnSync(process.execPath, [cli, 'coverage', '--spec', spec, '--profiles', 'profiles', ...args],
     { cwd: dir, encoding: 'utf8', timeout: 10000 });
   assert.ifError(result.error);
   assert.strictEqual(result.signal, null);
@@ -96,11 +96,13 @@ test('coverage text retains percentages, unread paths, threshold message and exi
 
 test('coverage --json retains bad-input exit code and stderr', (t) => {
   const dir = fixture(t);
-  fs.unlinkSync(path.join(dir, 'spec.json'));
-  const result = run(dir, ['--json']);
+  const missingSpec = path.join(dir, 'spec.json');
+  fs.unlinkSync(missingSpec);
+  // An absolute input makes ENOENT.path consistent across Node versions on Windows.
+  const result = run(dir, ['--json'], missingSpec);
   assert.strictEqual(result.status, 2);
   assert.strictEqual(result.stdout, '');
-  assert.match(result.stderr, /^error: file not found: spec\.json\r?\n$/);
+  assert.strictEqual(result.stderr.replace(/\r\n/g, '\n'), 'error: file not found: ' + missingSpec + '\n');
 });
 
 test('coverage --json retains an empty result when there are no profiles', (t) => {

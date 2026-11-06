@@ -6,6 +6,7 @@ const { coverage } = require('./coverage');
 const registry = require('./registry');
 const { profileToJsonSchema } = require('./jsonschema');
 const { startMock } = require('./mock');
+const { usageReport, formatReport } = require('./report');
 
 function parse(argv) { const o = { _: [] }; for (let i = 0; i < argv.length; i++) { const a = argv[i]; if (a.startsWith('--')) { const k = a.slice(2); const v = (argv[i + 1] && !argv[i + 1].startsWith('--')) ? argv[++i] : true; o[k] = v; } else o._.push(a); } return o; }
 const WARN = 0.8;
@@ -36,6 +37,10 @@ const HELP = [
   '  mock --profiles <dir> [--port <n>]',
   '      Start a local HTTP server that answers each recorded operation with schema-valid',
   '      fake data derived from the profiles — run a consumer with no real provider present.',
+  '',
+  '  usage-report --profiles <dir> [--json]',
+  '      Summarize, per operation and field, which consumers depend on it — so you can see',
+  '      which fields are widely used versus used by only one consumer.',
 ].join('\n');
 
 function emit(json, obj, textFn) { if (json) console.log(JSON.stringify(obj, null, 2)); else textFn(); }
@@ -129,6 +134,15 @@ function exportSchema(o) {
   return 0;
 }
 
+function usageReportCmd(o) {
+  if (!o.profiles) { console.error('need --profiles <dir>'); return 2; }
+  const profiles = registry.loadProfiles(o.profiles);
+  if (profiles.length === 0) { console.error('no profiles found in ' + o.profiles); return 2; }
+  const report = usageReport(profiles);
+  emit(!!o.json, report, () => console.log(formatReport(report)));
+  return 0;
+}
+
 function mockCmd(o) {
   if (!o.profiles) { console.error('need --profiles <dir>'); return 2; }
   const profiles = registry.loadProfiles(o.profiles);
@@ -165,6 +179,7 @@ function main(argv) {
     if (cmd === 'pull') return pull(o);
     if (cmd === 'export-schema') return exportSchema(o);
     if (cmd === 'mock') return mockCmd(o);
+    if (cmd === 'usage-report') return usageReportCmd(o);
     console.error('unknown command: ' + cmd); console.log(HELP); return 2;
   } catch (e) {
     if (e && e.code === 'ENOENT') console.error('error: file not found: ' + e.path);

@@ -6,6 +6,16 @@
   additive: `consumer`, rounded `pct`, top-level `fail`, threshold behavior, exit codes, and
   text output are unchanged.
 
+## 1.8.0
+- **`usage-report` command**: `usagecontract usage-report --profiles <dir> [--json]` summarizes,
+  per operation and field, which consumers depend on it — so a provider can see which fields are
+  widely used (change carefully) versus used by a single consumer (safer to change). Programmatic
+  `usageReport(profiles)`.
+- Docs: add a "Your first contribution" guide to CONTRIBUTING. Thanks to
+  [@chinmayee5599](https://github.com/chinmayee5599) ([#13](https://github.com/javvadivijayprasad/usagecontract/pull/13)).
+- Docs: add `export-schema` and `mock` to the README CLI reference. Thanks to
+  [@agenticsymphony-tech](https://github.com/agenticsymphony-tech) ([#18](https://github.com/javvadivijayprasad/usagecontract/pull/18)).
+
 ## 1.7.0
 - **`--version` / `-v` flag**: `usagecontract --version` now prints the package version and exits 0
   (previously it fell through to the unknown-command error). Thanks to
