@@ -63,8 +63,7 @@
     "@vijaypjavvadi/usagecontract": "^2.0.0"
   },
   "devDependencies": {
-    "@types/vscode": "^1.75.0",
-    "sharp": "^0.35.4"
+    "@types/vscode": "^1.75.0"
   },
   "repository": {
     "type": "git",
