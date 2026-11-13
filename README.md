@@ -14,7 +14,7 @@ reads*, and fails CI only when a provider spec change breaks a consumer that tru
 changed field. You get Pact-style "who breaks?" precision with the cost of a linter: no DSL, no
 duplicate contract file, no broker.
 
-> `1.7.0`. Node ≥ 18. HTTP clients: `fetch`, `axios`, `got`, and `undici`.
+> `1.9.0`. Node ≥ 18. HTTP clients: `fetch`, `axios`, `got`, and `undici`.
 > **New here?** Read **[GETTING-STARTED.md](GETTING-STARTED.md)** for the full walkthrough.
 > **Coming from Pact?** See **[Migrating a Pact suite](docs/migrating-from-pact.md)**.
 
@@ -319,7 +319,7 @@ npm run example       # end-to-end demo
 If you use usagecontract, please cite it (see [CITATION.cff](CITATION.cff)):
 
 ```
-Prasad, V. (2026). usagecontract: usage-aware, spec-anchored contract testing (v1.7.0) [Software].
+Prasad, V. (2026). usagecontract: usage-aware, spec-anchored contract testing (v1.9.0) [Software].
 ```
 
 Underlying method: *"Usage-Aware, Spec-Anchored Contract Testing: Deriving Consumer Contracts from
@@ -337,6 +337,10 @@ Thanks to everyone who has helped improve usagecontract:
   ([#13](https://github.com/javvadivijayprasad/usagecontract/pull/13)).
 - [@agenticsymphony-tech](https://github.com/agenticsymphony-tech) — documented `export-schema` and
   `mock` in the CLI reference ([#18](https://github.com/javvadivijayprasad/usagecontract/pull/18)).
+- [@sunxuquo](https://github.com/sunxuquo) — added per-operation detail to `coverage --json`
+  ([#17](https://github.com/javvadivijayprasad/usagecontract/pull/17)).
+- [@rodrigobgarcia](https://github.com/rodrigobgarcia) — `mock` now lists the operations it serves
+  on startup ([#19](https://github.com/javvadivijayprasad/usagecontract/pull/19)).
 
 [![Contributors](https://contrib.rocks/image?repo=javvadivijayprasad/usagecontract)](https://github.com/javvadivijayprasad/usagecontract/graphs/contributors)
 

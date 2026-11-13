@@ -1,13 +1,14 @@
 # Changelog
 
-## Unreleased
+## 1.9.0
 - **Coverage JSON detail**: `coverage --json` now includes each consumer's existing `perOp`
   data, with `read`/`reachable` counts and sorted `unread` field paths per operation. This is
   additive: `consumer`, rounded `pct`, top-level `fail`, threshold behavior, exit codes, and
-  text output are unchanged.
+  text output are unchanged. Thanks to
+  [@sunxuquo](https://github.com/sunxuquo) ([#17](https://github.com/javvadivijayprasad/usagecontract/pull/17)).
 - **`mock` lists served operations**: on startup, `usagecontract mock` now prints each operation
   it answers (one per line, e.g. `GET /orders/{id}`), so you don't have to guess the routes.
-
+  Thanks to [@rodrigobgarcia](https://github.com/rodrigobgarcia) ([#19](https://github.com/javvadivijayprasad/usagecontract/pull/19)).
 
 ## 1.8.0
 - **`usage-report` command**: `usagecontract usage-report --profiles <dir> [--json]` summarizes,
