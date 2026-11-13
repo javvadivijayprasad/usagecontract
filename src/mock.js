@@ -56,6 +56,10 @@ function responsesFor(profiles) {
   return byOp;
 }
 
+function servedOperations(profiles) {
+  return Object.keys(responsesFor(profiles));
+}
+
 function matchers(byOp) {
   return Object.keys(byOp).map((op) => {
     const sp = op.indexOf(' ');
@@ -94,4 +98,4 @@ function startMock(profiles, opts) {
 }
 function _lastServer() { return LAST; }
 
-module.exports = { fakeFromSchema, mergeSchema, responsesFor, createMockServer, startMock, _lastServer };
+module.exports = { fakeFromSchema, mergeSchema, responsesFor, createMockServer, startMock, _lastServer, servedOperations };
