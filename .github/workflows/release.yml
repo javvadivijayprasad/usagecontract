@@ -44,7 +44,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24          # npm 11+ is required for trusted publishing (Node 22 ships npm 10)
           cache: npm
           registry-url: https://registry.npmjs.org
       - run: npm ci
