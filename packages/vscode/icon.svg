@@ -1,0 +1,19 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="usagecontract">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#4F46E5"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#bg)"/>
+  <!-- full spec ring (faint) -->
+  <circle cx="64" cy="64" r="40" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="9"/>
+  <!-- observed-usage arc (~62% of the ring), starting at the top -->
+  <circle cx="64" cy="64" r="40" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round"
+          stroke-dasharray="156 95" transform="rotate(-90 64 64)"/>
+  <!-- consumer markers on the ring -->
+  <circle cx="64" cy="24" r="5.5" fill="#FFFFFF"/>
+  <circle cx="98.6" cy="84" r="5.5" fill="#FFFFFF"/>
+  <!-- check: safe to deploy -->
+  <path d="M46 66 l12 13 l25 -30" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
