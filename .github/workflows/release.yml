@@ -40,6 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -75,12 +76,12 @@ jobs:
             npm publish --provenance --access public
           fi
 
-      - name: Package the extension
+      - name: Package the extension (.vsix is attached to the GitHub release)
         working-directory: packages/vscode
         run: npx @vscode/vsce@4.1.0 package --no-dependencies
 
-      - name: Publish the extension to the Marketplace (trusted publishing, no token)
-        if: env.DRY_RUN != 'true'
+      - name: Publish the extension to the Marketplace (only if a VSCE_PAT secret is set)
+        if: env.DRY_RUN != 'true' && env.VSCE_PAT != ''
         working-directory: packages/vscode
         run: |
           v=$(node -p "require('./package.json').version")
@@ -88,8 +89,11 @@ jobs:
           if [ "$live" = "$v" ]; then
             echo "vijaypjavvadi.usagecontract $v is already on the Marketplace - skipping"
           else
-            npx @vscode/vsce@4.1.0 publish --oidc --no-dependencies --packagePath usagecontract-*.vsix
+            npx @vscode/vsce@4.1.0 publish --pat "$VSCE_PAT" --no-dependencies --packagePath usagecontract-*.vsix
           fi
+      # If no VSCE_PAT secret exists, the step above is skipped — download the .vsix from the
+      # GitHub release and upload it once at marketplace.visualstudio.com/manage. Switch to trusted
+      # publishing (--oidc) later once the publisher's owner account is set up.
 
       - name: GitHub release (Zenodo archives it)
         if: env.DRY_RUN != 'true'
