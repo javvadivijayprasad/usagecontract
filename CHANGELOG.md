@@ -5,6 +5,9 @@
   data, with `read`/`reachable` counts and sorted `unread` field paths per operation. This is
   additive: `consumer`, rounded `pct`, top-level `fail`, threshold behavior, exit codes, and
   text output are unchanged.
+- **`mock` lists served operations**: on startup, `usagecontract mock` now prints each operation
+  it answers (one per line, e.g. `GET /orders/{id}`), so you don't have to guess the routes.
+
 
 ## 1.8.0
 - **`usage-report` command**: `usagecontract usage-report --profiles <dir> [--json]` summarizes,

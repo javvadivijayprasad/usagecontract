@@ -54,6 +54,12 @@ test('responsesFor merges the same op across consumers', () => {
   assert.deepStrictEqual(props, ['id', 'items', 'status', 'total']); // union of web + mobile
 });
 
+test('servedOperations lists each operation once', () => {
+  // 'GET /orders/{id}' is used by both profiles but must appear only once.
+  assert.deepStrictEqual(mock.servedOperations([profile, mobile]), ['GET /orders/{id}', 'GET /orders']);
+  assert.deepStrictEqual(mock.servedOperations([]), []);
+});
+
 test('mock server answers matched operations with valid fake data, 404 otherwise', async () => {
   const server = mock.createMockServer([profile, mobile]);
   await new Promise((res) => server.listen(0, '127.0.0.1', res));

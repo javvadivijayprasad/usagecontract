@@ -5,7 +5,7 @@ const { compat, isBreaking } = require('./compat');
 const { coverage } = require('./coverage');
 const registry = require('./registry');
 const { profileToJsonSchema } = require('./jsonschema');
-const { startMock } = require('./mock');
+const { startMock, servedOperations } = require('./mock');
 const { usageReport, formatReport } = require('./report');
 
 function parse(argv) { const o = { _: [] }; for (let i = 0; i < argv.length; i++) { const a = argv[i]; if (a.startsWith('--')) { const k = a.slice(2); const v = (argv[i + 1] && !argv[i + 1].startsWith('--')) ? argv[++i] : true; o[k] = v; } else o._.push(a); } return o; }
@@ -151,6 +151,7 @@ function mockCmd(o) {
   startMock(profiles, { port });
   console.log('usagecontract mock listening on http://localhost:' + port);
   console.log('serving ' + profiles.length + ' profile(s) as schema-valid fake responses; Ctrl+C to stop.');
+  for (const op of servedOperations(profiles)) {console.log('  ' + op);}
   return 0;
 }
 
