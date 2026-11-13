@@ -29,8 +29,10 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
-      - run: npm test --workspaces --if-present          # core + extension unit tests
-      - run: npm run --workspace packages/core test:coverage   # enforce the core coverage floor
+      - run: npm test --workspaces --if-present          # core + extension unit tests (all node versions)
+      - name: Core coverage floor
+        if: matrix.node == 22                            # the --test-coverage-* threshold flags need Node 22
+        run: npm run --workspace packages/core test:coverage
 
   publish:
     needs: check
