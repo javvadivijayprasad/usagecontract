@@ -1,44 +1,16 @@
 {
-  "name": "@vijaypjavvadi/usagecontract",
-  "version": "1.9.0",
-  "description": "Usage-aware, spec-anchored contract testing: derive each consumer's contract from observed traffic and gate provider changes by real per-consumer usage.",
-  "keywords": [
-    "contract-testing",
-    "openapi",
-    "api",
-    "breaking-changes",
-    "consumer-driven",
-    "microservices",
-    "can-i-deploy"
-  ],
+  "name": "usagecontract-monorepo",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Monorepo for usagecontract: the npm package (packages/core) and the VS Code extension (packages/vscode).",
   "license": "MIT",
   "author": "Vijay Prasad <jvijayprasad@gmail.com>",
-  "type": "commonjs",
-  "main": "src/index.js",
-  "bin": {
-    "usagecontract": "bin/usagecontract.js"
-  },
-  "files": [
-    "src",
-    "bin",
-    "README.md",
-    "LICENSE",
-    "GETTING-STARTED.md",
-    "CITATION.cff",
-    "CHANGELOG.md"
+  "workspaces": [
+    "packages/*"
   ],
-  "engines": {
-    "node": ">=18"
-  },
   "scripts": {
-    "test": "node scripts/test.js",
-    "example": "node example/run.js",
-    "test:coverage": "node scripts/test.js --coverage"
-  },
-  "devDependencies": {
-    "axios": "^1.18.1",
-    "got": "^11.8.6",
-    "undici": "^6.21.0"
+    "test": "npm test --workspaces --if-present",
+    "preflight": "npm test --workspaces --if-present && npm run --workspace packages/core test:coverage"
   },
   "repository": {
     "type": "git",

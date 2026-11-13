@@ -1,0 +1,78 @@
+{
+  "name": "usagecontract",
+  "displayName": "usagecontract — usage-aware contract testing",
+  "description": "Gate OpenAPI changes by real per-consumer usage. Run can-i-deploy, view coverage, and flag breaking spec changes inline.",
+  "version": "2.0.0",
+  "publisher": "vijaypjavvadi",
+  "license": "MIT",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Testing",
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "contract-testing",
+    "openapi",
+    "api",
+    "breaking-changes",
+    "can-i-deploy",
+    "consumer-driven"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "usagecontract.canIDeploy",
+        "title": "usagecontract: Can I Deploy?"
+      },
+      {
+        "command": "usagecontract.coverage",
+        "title": "usagecontract: Coverage Report"
+      },
+      {
+        "command": "usagecontract.checkActiveSpec",
+        "title": "usagecontract: Check Active Spec for Breaking Changes"
+      }
+    ],
+    "configuration": {
+      "title": "usagecontract",
+      "properties": {
+        "usagecontract.baselineSpec": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the baseline OpenAPI spec (absolute, or relative to the workspace root)."
+        },
+        "usagecontract.profilesDir": {
+          "type": "string",
+          "default": "profiles",
+          "description": "Folder containing recorded consumer profiles (absolute, or relative to the workspace root)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "test": "node --test test/core.test.js",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-lines=90 --test-coverage-branches=75 --test-coverage-functions=90 test/core.test.js"
+  },
+  "dependencies": {
+    "@vijaypjavvadi/usagecontract": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "sharp": "^0.35.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/javvadivijayprasad/usagecontract.git",
+    "directory": "packages/vscode"
+  },
+  "homepage": "https://github.com/javvadivijayprasad/usagecontract#readme",
+  "bugs": {
+    "url": "https://github.com/javvadivijayprasad/usagecontract/issues"
+  }
+}

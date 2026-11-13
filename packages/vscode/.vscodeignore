@@ -1,0 +1,8 @@
+.github/**
+test/**
+**/*.test.js
+.gitignore
+.vscodeignore
+icon.svg
+logo-wordmark.svg
+node_modules/.bin/**
