@@ -23,7 +23,7 @@ const HELP = [
   '      either --base (one spec) or resolved per-consumer from --registry by its specRef.',
   '',
   '  coverage --spec <spec> --profiles <dir> [--min-coverage <0-100>] [--json]',
-  '  verify   --spec <spec> --profiles <dir>',
+  '  verify   --spec <spec> --profiles <dir> [--json]',
   '',
   '  push --registry <dir> [--spec <spec> --ref <provider@version>] [--profiles <dir>]',
   '      Store a provider spec (by ref) and/or publish profiles into the registry.',
@@ -104,10 +104,14 @@ function coverageCmd(o) {
 
 function verify(o) {
   if (!o.spec || !o.profiles) { console.error('need --spec, --profiles'); return 2; }
-  const spec = registry.loadSpec(o.spec), profiles = registry.loadProfiles(o.profiles); let bad = 0;
-  for (const p of profiles) { const c = compat(spec, p); if (!c.compatible) { bad++; console.log('INCOMPATIBLE ' + p.consumer + ': ' + c.violations.map(v => (v.field || v.op) + ' (' + v.reason + ')').join(', ')); } }
-  if (!bad) { console.log('OK: all ' + profiles.length + ' profile(s) satisfied by spec.'); return 0; }
-  return 1;
+  const spec = registry.loadSpec(o.spec), profiles = registry.loadProfiles(o.profiles), json = !!o.json;
+  const rows = profiles.map(p => { const c = compat(spec, p); return { consumer: p.consumer, compatible: c.compatible, violations: c.violations.map(v => ({ field: v.field || v.op, reason: v.reason })) }; });
+  const incompatible = rows.filter(r => !r.compatible);
+  emit(json, { verdict: incompatible.length ? 'INCOMPATIBLE' : 'OK', checked: rows.length, results: rows }, () => {
+    for (const r of incompatible) console.log('INCOMPATIBLE ' + r.consumer + ': ' + r.violations.map(v => v.field + ' (' + v.reason + ')').join(', '));
+    if (!incompatible.length) console.log('OK: all ' + rows.length + ' profile(s) satisfied by spec.');
+  });
+  return incompatible.length ? 1 : 0;
 }
 
 function exportSchema(o) {
